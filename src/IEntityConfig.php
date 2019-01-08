@@ -1,12 +1,13 @@
 <?php
 
-
 namespace LowAbstractionORM;
 
+
 /**
- * Class RepoFactory
+ * Interface IEntityConfig
  * @package LowAbstractionORM
  */
-class RepoFactory {
+interface IEntityConfig
+{
 
 }
