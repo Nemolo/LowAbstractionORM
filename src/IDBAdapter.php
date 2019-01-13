@@ -10,44 +10,13 @@ interface IDBAdapter
 {
 
     public static function build(array $config): self;
+    public function test(): bool;
 
-    /** @return mixed */
+    /** @return bool */
     public function connect();
 
-    /** @return mixed */
+    /** @return bool */
     public function disconnect();
-
-    /**
-     * @param string $sql
-     * @param array $options
-     *
-     * @return mixed
-     */
-    public function prepare($sql, array $options = array());
-
-    /**
-     * @param array $parameters
-     *
-     * @return mixed
-     */
-    public function execute(array $parameters = array());
-
-    /**
-     * @param null $fetchStyle
-     * @param null $cursorOrientation
-     * @param null $cursorOffset
-     *
-     * @return mixed
-     */
-    public function fetch($fetchStyle = null, $cursorOrientation = null, $cursorOffset = null);
-
-    /**
-     * @param null $fetchStyle
-     * @param int  $column
-     *
-     * @return mixed
-     */
-    public function fetchAll($fetchStyle = null, $column = 0);
 
     /**
      * @param string $table
