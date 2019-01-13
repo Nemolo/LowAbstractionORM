@@ -3,12 +3,13 @@
 namespace LowAbstractionORM\adapters\cache;
 
 use LowAbstractionORM\ICacheAdapter;
+use LowAbstractionORM\IMemoryCacheAdapter;
 
 /**
  * Class CRedis
  * @package LowAbstractionORM\adapters\cache
  */
-class CRedis implements ICacheAdapter
+class RedisCacheAdapter implements IMemoryCacheAdapter
 {
     /**
      * @var \Redis

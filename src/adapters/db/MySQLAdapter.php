@@ -2,12 +2,13 @@
 
 namespace LowAbstractionORM\adapters;
 
+use LowAbstractionORM\IDBAdapter;
 
 /**
- * Class CMySQLAdapter
+ * Class MySQLAdapter
  * @package LowAbstractionORM\adapters
  */
-class CMySQLAdapter implements IDBAdapter
+class MySQLAdapter implements IDBAdapter
 {
 	/** @var \PDO */
 	protected $connection;

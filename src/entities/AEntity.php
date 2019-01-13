@@ -10,18 +10,22 @@ use LowAbstractionORM\IEntity;
  */
 abstract class AEntity implements IEntity
 {
-	/**
-	 * @var string
-	 * entity table name
-	 */
-	protected $entityTable;
+    /**
+     * We write this const here, so that they can be changed in extended class, but will only read those in config
+     * builder, and only use the EntityConfig to read the fields;
+     */
+	const entityTable = self::class;
+    const primaryKeys = ['id'];
+    const autoIncrement = true;
+    const readOnly = false;
 
-	protected $ownersFields = [];
+
+    protected $ownersFields = [];
 	protected $originalFields = [];
     protected $fields = [];
-	protected $primaryKeys = ['id'];
-	protected $readOnly = false;
-    protected $em;
+	protected $em;
+
+
 
     /**
      * AEntity constructor.
@@ -46,6 +50,10 @@ abstract class AEntity implements IEntity
         $this->ownersFields = array_keys($this->fields);
         $this->originalFields = $this->fields;
 	}
+
+	public function config() {
+	    return $this->ormConfig->entity(self::class);
+    }
 
     /**
      * @return array

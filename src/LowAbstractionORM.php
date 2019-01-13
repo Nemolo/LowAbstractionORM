@@ -2,8 +2,9 @@
 
 namespace LowAbstractionORM;
 
-use LowAbstractionORM\adapterso\cache\CDummyCache;
+use LowAbstractionORM\adapterso\cache\DummyCacheAdapter;
 use LowAbstractionORM\factories\CRepoFactory;
+use LowAbstractionORM\utils\ConfigHandler;
 
 final class LowAbstractionORM {
 
@@ -13,15 +14,15 @@ final class LowAbstractionORM {
     private $dbAdapter;
     private $entityFactory;
     private $repoFactory;
+    private $configHandler;
 
     protected $cacheAdapter;
 
-    public function __construct(array $config, ICacheAdapter $cacheAdapter = null)
+    public function __construct(array $config)
     {
-        $this->setup($config);
-        if(!$cacheAdapter && !$this->cacheAdapter) {
-            $this->cacheAdapter = new CDummyCache();
-        }
+        $this->configHandler = new ConfigHandler($config);
+        $this->dbAdapter = $this->configHandler->getDbAdapterInstance();
+        $this->cacheAdapter = $this->configHandler->getCacheAdapterInstance();
     }
 
     private function setup($config) {

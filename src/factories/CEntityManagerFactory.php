@@ -3,6 +3,8 @@
 namespace LowAbstractionORM\factories;
 
 
+use LowAbstractionORM\LowAbstractionORM;
+
 /**
  * Class CEntityManagerFactory
  * @package bamboo\core\db\pandaorm\factories
@@ -10,6 +12,13 @@ namespace LowAbstractionORM\factories;
 class CEntityManagerFactory
 {
     protected $factories = [];
+
+    private $lowAbstractionOrm;
+
+    public function __construct(LowAbstractionORM $lowAbstractionORM)
+    {
+        $this->lowAbstractionOrm = $lowAbstractionORM;
+    }
 
     /**
      * @param $entityName

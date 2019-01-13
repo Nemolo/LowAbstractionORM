@@ -2,13 +2,14 @@
 
 namespace LowAbstractionORM\adapters\cache;
 
-use LowAbstractionORM\ICacheAdapter;
+
+use LowAbstractionORM\IMemoryCacheAdapter;
 
 /**
  * Class CMemcached
  * @package LowAbstractionORM\adapters\cache
  */
-class CMemcached implements ICacheAdapter
+class MemcachedAdapter implements IMemoryCacheAdapter
 {
 	protected $memcached;
 	protected $prefix;

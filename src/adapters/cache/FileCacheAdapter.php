@@ -8,7 +8,7 @@ use LowAbstractionORM\ICacheAdapter;
  * Class CFileCache
  * @package LowAbstractionORM\adapters\cache
  */
-class CFileCache implements ICacheAdapter
+class FileCacheAdapter implements ICacheAdapter
 {
 	protected $prefix;
 	protected $fileName;

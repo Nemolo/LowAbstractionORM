@@ -1,0 +1,19 @@
+{
+  "name": "nemolo/low-abstraction-orm/example",
+  "description": "An ORM with low level abstraction and high ease of use (hopefully)",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Fabrizio Marconi",
+      "email": "tdlemon@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.2.0",
+    "nemolo/low-abstraction-orm": "*"
+  },
+  "autoload": {
+
+  }
+}

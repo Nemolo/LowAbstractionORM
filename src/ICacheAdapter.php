@@ -3,8 +3,8 @@
 namespace LowAbstractionORM;
 
 /**
- * Interface IEntity
- * @package bamboo\core\db\pandaorm\entities
+ * Interface ICacheAdapter
+ * @package LowAbstractionORM
  */
 interface ICacheAdapter
 {

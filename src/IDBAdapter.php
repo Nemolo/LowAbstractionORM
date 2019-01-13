@@ -8,6 +8,9 @@ namespace LowAbstractionORM;
  */
 interface IDBAdapter
 {
+
+    public static function build(array $config): self;
+
     /** @return mixed */
     public function connect();
 

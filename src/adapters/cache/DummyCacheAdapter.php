@@ -1,6 +1,6 @@
 <?php
 
-namespace LowAbstractionORM\adapterso\cache;
+namespace LowAbstractionORM\adapters\cache;
 
 use LowAbstractionORM\ICacheAdapter;
 
@@ -9,7 +9,7 @@ use LowAbstractionORM\ICacheAdapter;
  * Class CDummyCache
  * @package bamboo\core\cache
  */
-class CDummyCache implements ICacheAdapter
+class DummyCacheAdapter implements ICacheAdapter
 {
 	public function get($key)
 	{

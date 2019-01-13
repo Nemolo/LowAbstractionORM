@@ -3,8 +3,8 @@
 namespace LowAbstractionORM\repositories;
 
 /**
- * Class ARepo
- * @package bamboo\core\db\pandaorm
+ * Class CRepo
+ * @package LowAbstractionORM\repositories
  */
 class CRepo extends ARepo
 {
