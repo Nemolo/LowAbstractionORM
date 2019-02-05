@@ -12,7 +12,7 @@ abstract class AEntity implements IEntity
 {
     /**
      * We write this const here, so that they can be changed in extended class, but will only read those in config
-     * builder, and only use the EntityConfig to read the fields;
+     * builder, and only use the EntityConfig to read the fields; Really? is it fast?
      */
 	const entityTable = self::class;
     const primaryKeys = ['id'];

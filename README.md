@@ -28,7 +28,8 @@ vorrei instanziare una volta LowAbsractionORM con le configurazioni fatte così 
     ]
     
 a questo punto lui fa le sue cose, se is_debug è falso una volta lette tutte le entità e configurazioni le serializza e 
-le butta in un file serializzato (per velocizzare successivi accessi)
+le butta in un file serializzato (per velocizzare successivi accessi) -> vale la pena? se metto le configurazioni in delle CONST
+è più facile da configurare e non ho bisogno di fare tante letture, non so se è più veloce?
 
 Poi dobbiamo adattare tutto il resto, vorrei che sia possibile passare alla configurazione degli adapter
 che noi siamo in grado di chiamare nei vari metodi dell'orm (in EntityManager), anche se la vedo parecchio difficille,
