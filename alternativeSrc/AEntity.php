@@ -9,7 +9,8 @@ abstract class AEntity implements \JsonSerializable {
 	const KEYS = ['id'];
 	const AUTO_INCREMENT = 'id';
 	const MASK = [];
-	const LOCALIZED_FIELDS = [ ];
+	const RELATIONSHIPS = [ ];
+
 	private $savedCopy;
 
 	public function __construct($data = [])
@@ -49,13 +50,40 @@ abstract class AEntity implements \JsonSerializable {
 		return $this->getRepo()->insert($this);
 	}
 
+    /**
+     * @return bool
+     */
+	public function hasKeys() {
+        foreach(static::KEYS as $key) {
+            if(empty($this->$key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+	public function getIds() {
+	    $keys = [];
+	    foreach(static::KEYS as $key) {
+	        if(empty($this->$key)) {
+	            throw new \Exception("$key not defined for object");
+            }
+	        $keys[$key] = $this->$key;
+        }
+	    return $keys;
+    }
+
 	/**
 	 * @return static|null
 	 * @throws \Exception
 	 */
 	public function refresh() {
-		if(!$this->id) return null;
-		return $this->getRepo()->getOneById($this->id);
+		if(!$this->hasKeys()) return null;
+		return $this->getRepo()->getOneById($this->getIds());
 	}
 
 	/**
