@@ -2,7 +2,9 @@
 
 namespace SincAppSviluppo\domain;
 
-abstract class ARepo
+use LowAbstractionORM\IRepo;
+
+abstract class ARepo implements IRepo
 {
     private $connection;
 
@@ -273,99 +275,6 @@ abstract class ARepo
         return $stmt->execute(array_merge($whereBind));
     }
 
-    /**
-     * @param $query
-     * @param array $data
-     * @param null $className
-     * @return array
-     * @throws \Exception
-     */
-    protected function getRows($query, array $data = [], $className = null)
-    {
-        $stmt = $this->pdo()->prepare($query);
-        $stmt->execute($data);
-        if ($className) return $stmt->fetchAll(\PDO::FETCH_CLASS, $className);
-        else return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    }
 
-    /**
-     * @param $query
-     * @param array $data
-     * @param null $className
-     * @return AEntity|null
-     * @throws \Exception
-     */
-    protected function getRow($query, array $data = [], $className = null)
-    {
-        $asd = $this->pdo()->prepare($query);
-        $asd->execute($data);
-        if ($className) $res = $asd->fetchObject($className);
-        else $res = $asd->fetch(\PDO::FETCH_ASSOC);
-        if ($res) return $res;
-        else return null;
-    }
-
-	/**
-	 * @param $url
-	 * @param $method
-	 * @param $data
-	 * @param array $header
-	 *
-	 * @return mixed
-	 * @throws EWareCurlException
-	 */
-    public function curl($url, $method, $data, array $header = []) {
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL, $url);
-	    switch (strtolower($method)) {
-		    case 'put':
-			    curl_setopt($ch, CURLOPT_POST, 1);
-			    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-			    break;
-		    case 'post':
-			    curl_setopt($ch, CURLOPT_POST, 1);
-			    break;
-		    case 'delete':
-			    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-	    }
-
-	    $builtHeader = [];
-	    foreach ($header as $key => $val) {
-		    $builtHeader[] = $key.': '.$val;
-	    }
-
-	    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-	    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-	    curl_setopt($ch, CURLOPT_HTTPHEADER, $builtHeader);
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    $output = curl_exec($ch);
-	    $errNo = curl_errno($ch);
-	    $outCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	    if($errNo != 0) {
-		    $error = curl_error($ch);
-		    throw new EWareCurlException($error);
-	    }
-	    curl_close($ch);
-	    if($outCode < 200 || $outCode >= 300) {
-	    	throw new EWareCurlException($output);
-	    }
-	    return $output;
-    }
-
-	/**
-	 * @param $url
-	 * @param $method
-	 * @param array $data
-	 * @param array $header
-	 *
-	 * @return mixed
-	 * @throws EWareCurlException
-	 */
-    public function curlJson($url, $method, $data, array $header = []) {
-	    $header['Content-Type'] = "application/json";
-	    return json_decode($this->curl($url, $method,  json_encode($data),  $header),true);
-    }
 
 }

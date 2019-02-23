@@ -2,7 +2,9 @@
 
 namespace SincAppSviluppo\domain;
 
-class Connection {
+use LowAbstractionORM\IDBAdapter;
+
+abstract class PdoAdapter implements IDBAdapter {
     /** @var \PDO $pdo */
     private $pdo;
 
@@ -61,4 +63,35 @@ class Connection {
         return $this->getPdo()->rollBack();
     }
 
+    /**
+     * @param $query
+     * @param array $data
+     * @param null $className
+     * @return AEntity|null
+     * @throws \Exception
+     */
+    protected function getRow($query, array $data = [], $className = null)
+    {
+        $asd = $this->pdo()->prepare($query);
+        $asd->execute($data);
+        if ($className) $res = $asd->fetchObject($className);
+        else $res = $asd->fetch(\PDO::FETCH_ASSOC);
+        if ($res) return $res;
+        else return null;
+    }
+
+    /**
+     * @param $query
+     * @param array $data
+     * @param null $className
+     * @return array
+     * @throws \Exception
+     */
+    protected function getRows($query, array $data = [], $className = null)
+    {
+        $stmt = $this->pdo()->prepare($query);
+        $stmt->execute($data);
+        if ($className) return $stmt->fetchAll(\PDO::FETCH_CLASS, $className);
+        else return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

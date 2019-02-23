@@ -2,9 +2,10 @@
 
 namespace SincAppSviluppo\domain;
 
-abstract class AEntity implements \JsonSerializable
-{
+use LowAbstractionORM\IEntity;
 
+abstract class AEntity implements IEntity
+{
     const TABLE = null;
     const REPO = Repo::class;
     const KEYS = ['id'];
