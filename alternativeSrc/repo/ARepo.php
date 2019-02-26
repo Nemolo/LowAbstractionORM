@@ -2,7 +2,9 @@
 
 namespace SincAppSviluppo\domain;
 
-abstract class ARepo
+use LowAbstractionORM\IRepo;
+
+abstract class ARepo implements IRepo
 {
     private $connection;
 
@@ -11,7 +13,7 @@ abstract class ARepo
     const TIME_FORMAT = 'H:i:s';
     const UNIX_TIMESTAMP_FORMAT = 'U';
 
-    protected $entity;
+    protected $entityClass;
 
 	/**
 	 * ARepo constructor.
@@ -21,14 +23,14 @@ abstract class ARepo
 	 *
 	 * @throws \Exception
 	 */
-    public final function __construct(Connection $connection, $entity = null)
+    public final function __construct(Connection $connection, $entityClass = null)
     {
         $this->connection = $connection;
-		if(!$this->entity) {
-			$this->entity = $entity;
+		if(!$this->entityClass) {
+			$this->entityClass = $entityClass;
         }
         
-        if(!$this->entity) {
+        if(!$this->entityClass) {
             throw new \Exception('You have to specify Entity when you build a Repo');
         }
     }
@@ -73,7 +75,7 @@ abstract class ARepo
      */
     public function getOneById($id) {
         /* @var AEntity $className*/
-        $className = $this->entity;
+        $className = $this->entityClass;
         if($id === null) return null;
         if(count($className::KEYS) === 1) return $this->getOneByIds([$id]);
         throw new \Exception('Can\'t provide this entity with just one key');
@@ -86,11 +88,11 @@ abstract class ARepo
      */
     public function getOneByIds(array $ids)
     {
-        if ($this->entity == NULL) {
+        if ($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
         /* @var AEntity $className*/
-        $className = $this->entity;
+        $className = $this->entityClass;
         if (count($className::KEYS) < 1 || count($ids) != count($className::KEYS)) {
             throw new \Exception('Wrong Key Number for Entity, Expected ' . count($className::KEYS) . 'provided: ' . count($ids));
         }
@@ -103,7 +105,7 @@ abstract class ARepo
             elseif(isset($ids[$num])) $bind[] = $ids[$num];
             else throw new \Exception('Wrong Key names for Entity Select');
         }
-        return $this->getRow($sql, $bind, $this->entity);
+        return $this->getRow($sql, $bind, $this->entityClass);
     }
 
     /**
@@ -112,11 +114,11 @@ abstract class ARepo
      * @throws \Exception
      */
     public function getOneBy(array $conditions) {
-        if($this->entity == NULL) {
+        if($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
         /* @var AEntity $className*/
-        $className = $this->entity;
+        $className = $this->entityClass;
         $table = $className::getTableName();
         $sql = "SELECT * FROM $table WHERE 1=1";
         foreach ($conditions as $key => $val) {
@@ -124,7 +126,7 @@ abstract class ARepo
             $sql.= " AND `$key` = ?";
 
         }
-        return $this->getRow($sql, array_values($conditions), $this->entity);
+        return $this->getRow($sql, array_values($conditions), $this->entityClass);
     }
 
 	/**
@@ -135,7 +137,7 @@ abstract class ARepo
 	 * @throws \Exception
 	 */
     public function getBySql($sql, $bind) {
-	    return $this->getRows($sql, $bind, $this->entity);
+	    return $this->getRows($sql, $bind, $this->entityClass);
     }
 
 	/**
@@ -146,7 +148,7 @@ abstract class ARepo
 	 * @throws \Exception
 	 */
 	public function getOneBySql($sql, $bind) {
-		return $this->getRow($sql, $bind, $this->entity);
+		return $this->getRow($sql, $bind, $this->entityClass);
 	}
 
     /**
@@ -156,11 +158,11 @@ abstract class ARepo
      * @throws \ReflectionException
      */
     public function getManyBy(array $conditions, $limit = null) {
-        if($this->entity == NULL) {
+        if($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
         /* @var AEntity $className*/
-        $className = $this->entity;
+        $className = $this->entityClass;
         $table = $className::getTableName();
         $sql = "SELECT * FROM $table WHERE 1=1";
         foreach ($conditions as $key => $val) {
@@ -168,7 +170,7 @@ abstract class ARepo
             $sql.= " AND `$key` = ?";
         }
         if(is_numeric($limit)) $sql.=" LIMIT $limit";
-        return $this->getRows($sql, array_values($conditions), $this->entity);
+        return $this->getRows($sql, array_values($conditions), $this->entityClass);
     }
 
     /**
@@ -177,13 +179,13 @@ abstract class ARepo
      * @throws \Exception
      */
     public function insert(AEntity $entity) {
-        if($this->entity == NULL) {
+        if($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
-        if($this->entity != get_class($entity)) {
+        if($this->entityClass != get_class($entity)) {
             throw new \Exception('Wrong repository to Update');
         }
-        $classVars = get_class_vars(get_class($entity));
+        $classVars = get_class_vars($entity);
         $keys = [];
         $bind = [];
         $point = [];
@@ -221,10 +223,10 @@ abstract class ARepo
      * @throws \Exception
      */
     public function update(AEntity $entity) {
-        if($this->entity == NULL) {
+        if($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
-        if($this->entity != get_class($entity)) {
+        if($this->entityClass != get_class($entity)) {
             throw new \Exception('Wrong repository to Update');
         }
 
@@ -253,10 +255,10 @@ abstract class ARepo
      * @throws \Exception
      */
     public function delete(AEntity $entity) {
-        if($this->entity == NULL) {
+        if($this->entityClass == NULL) {
             throw new \Exception('Wrong Repository setup');
         }
-        if($this->entity != get_class($entity)) {
+        if($this->entityClass != get_class($entity)) {
             throw new \Exception('Wrong repository to Update');
         }
 
@@ -273,99 +275,6 @@ abstract class ARepo
         return $stmt->execute(array_merge($whereBind));
     }
 
-    /**
-     * @param $query
-     * @param array $data
-     * @param null $className
-     * @return array
-     * @throws \Exception
-     */
-    protected function getRows($query, array $data = [], $className = null)
-    {
-        $stmt = $this->pdo()->prepare($query);
-        $stmt->execute($data);
-        if ($className) return $stmt->fetchAll(\PDO::FETCH_CLASS, $className);
-        else return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    }
 
-    /**
-     * @param $query
-     * @param array $data
-     * @param null $className
-     * @return AEntity|null
-     * @throws \Exception
-     */
-    protected function getRow($query, array $data = [], $className = null)
-    {
-        $asd = $this->pdo()->prepare($query);
-        $asd->execute($data);
-        if ($className) $res = $asd->fetchObject($className);
-        else $res = $asd->fetch(\PDO::FETCH_ASSOC);
-        if ($res) return $res;
-        else return null;
-    }
-
-	/**
-	 * @param $url
-	 * @param $method
-	 * @param $data
-	 * @param array $header
-	 *
-	 * @return mixed
-	 * @throws EWareCurlException
-	 */
-    public function curl($url, $method, $data, array $header = []) {
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL, $url);
-	    switch (strtolower($method)) {
-		    case 'put':
-			    curl_setopt($ch, CURLOPT_POST, 1);
-			    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-			    break;
-		    case 'post':
-			    curl_setopt($ch, CURLOPT_POST, 1);
-			    break;
-		    case 'delete':
-			    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-	    }
-
-	    $builtHeader = [];
-	    foreach ($header as $key => $val) {
-		    $builtHeader[] = $key.': '.$val;
-	    }
-
-	    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-	    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-	    curl_setopt($ch, CURLOPT_HTTPHEADER, $builtHeader);
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    $output = curl_exec($ch);
-	    $errNo = curl_errno($ch);
-	    $outCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	    if($errNo != 0) {
-		    $error = curl_error($ch);
-		    throw new EWareCurlException($error);
-	    }
-	    curl_close($ch);
-	    if($outCode < 200 || $outCode >= 300) {
-	    	throw new EWareCurlException($output);
-	    }
-	    return $output;
-    }
-
-	/**
-	 * @param $url
-	 * @param $method
-	 * @param array $data
-	 * @param array $header
-	 *
-	 * @return mixed
-	 * @throws EWareCurlException
-	 */
-    public function curlJson($url, $method, $data, array $header = []) {
-	    $header['Content-Type'] = "application/json";
-	    return json_decode($this->curl($url, $method,  json_encode($data),  $header),true);
-    }
 
 }

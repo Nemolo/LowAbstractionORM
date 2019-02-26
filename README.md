@@ -36,6 +36,12 @@ che noi siamo in grado di chiamare nei vari metodi dell'orm (in EntityManager), 
 comincerei con fare il MysqlAdapter e vedere come và (le join non saprei come renderele dei metodi senza fare il 
 QueryBuilder che è un casino)
 
+questo modulo dovrà essere pubblicato in composer per poter essere importato in altri progetti;
+
+
+alternativa più papabile a questa soluzione è nella cartella "alternativeSrc" che presuppone che le configurazioni siano
+scritte nelle costanti delle Entità. vantaggi/svantaggi?
+
 questo modulo dovrà essere pubblicato in composer per poter essere importato in altri progetti
 
 installare composer:
