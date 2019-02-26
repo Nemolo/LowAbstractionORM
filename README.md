@@ -37,3 +37,12 @@ comincerei con fare il MysqlAdapter e vedere come và (le join non saprei come r
 QueryBuilder che è un casino)
 
 questo modulo dovrà essere pubblicato in composer per poter essere importato in altri progetti
+
+installare composer:
+
+    docker pull composer
+    docker run --rm --interactive --tty --volume ${pwd}:/app composer install
+
+lanciare l'app:
+    
+    docker-compose up
