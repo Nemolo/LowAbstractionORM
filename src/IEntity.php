@@ -15,7 +15,6 @@ interface IEntity extends \Serializable, \JsonSerializable
     public function getEntityName();
     public function getEntityTable();
     public function getPrimaryKeys();
-    public function isReadOnly();
     public function getOwnerFields();
 
 	public function insert();

@@ -1,7 +1,8 @@
 <?php
 
-namespace SincAppSviluppo\domain;
+namespace LowAbstractionORM\repo;
 
+use LowAbstractionORM\IDBAdapter;
 use LowAbstractionORM\IRepo;
 
 abstract class ARepo implements IRepo
@@ -23,7 +24,7 @@ abstract class ARepo implements IRepo
 	 *
 	 * @throws \Exception
 	 */
-    public final function __construct(Connection $connection, $entityClass = null)
+    public final function __construct(IDBAdapter $connection, $entityClass = null)
     {
         $this->connection = $connection;
 		if(!$this->entityClass) {
@@ -33,39 +34,6 @@ abstract class ARepo implements IRepo
         if(!$this->entityClass) {
             throw new \Exception('You have to specify Entity when you build a Repo');
         }
-    }
-
-    /**
-     * @return \PDO
-     * @throws \Exception
-     */
-    protected function pdo()
-    {
-        return $this->connection->getPdo();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function beginTransaction()
-    {
-        $this->pdo()->beginTransaction();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function commit()
-    {
-        $this->pdo()->commit();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function rollback()
-    {
-        $this->pdo()->rollBack();
     }
 
     /**

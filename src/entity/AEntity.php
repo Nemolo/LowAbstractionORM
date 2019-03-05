@@ -1,6 +1,6 @@
 <?php
 
-namespace SincAppSviluppo\domain;
+namespace LowAbstractionOrm\entity;
 
 use LowAbstractionORM\IEntity;
 
